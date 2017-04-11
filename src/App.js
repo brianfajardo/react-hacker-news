@@ -50,31 +50,61 @@ class App extends Component {
   }
 
   render() {
+    const { searchTerm, list } = this.state
+
     return (
       <div className="App">
-        <form>
-          <input
-            type="text"
-            onChange={this.onSearchChange}
-          />
-        </form>
-        {this.state.list.filter(isSearched(this.state.searchTerm)).map(item =>
-          <div key={item.objectID}>
-            <a href={item.url}>{item.title}</a>
-            <span>{item.author}</span>
-            <span>{item.num_comments}</span>
-            <span>{item.points}</span>
-            <span>{item.objectID}</span>
-            <span>
-              <button onClick={() => this.onDismiss(item.objectID)}>
-                Dismiss
-              </button>
-            </span>
-          </div>
-        )}
+        <SearchBar
+          value={searchTerm}
+          onChange={this.onSearchChange}
+        >
+          Search
+        </SearchBar>
+        <Table
+          list={list}
+          pattern={searchTerm}
+          onDismiss={this.onDismiss}
+        />
       </div>
     )
   }
 }
+
+const SearchBar = ({ value, onChange, children }) =>
+  <form>
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+    />
+    {children}
+  </form>
+
+const Table = ({ list, pattern, onDismiss }) =>
+  <div>
+    {list.filter(isSearched(pattern)).map(item =>
+      <div key={item.objectID}>
+        <a href={item.url}>{item.title}</a>
+        <span>{item.author}</span>
+        <span>{item.num_comments}</span>
+        <span>{item.points}</span>
+        <span>{item.objectID}</span>
+        <span>
+          <Button onClick={() => onDismiss(item.objectID)}>
+            Dismiss
+              </Button>
+        </span>
+      </div>
+    )}
+  </div>
+
+const Button = ({ onClick, className = '', children }) =>
+  <button
+    onClick={onClick}
+    className={className}
+    type="button"
+  >
+    {children}
+  </button>
 
 export default App
