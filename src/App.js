@@ -19,21 +19,59 @@ const list = [
   },
 ]
 
+// ES6 - .includes() returns boolean
+const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
+
 class App extends Component {
+  // The constructor is called only once when the component initializes
+  constructor(props) {
+    // super(props) calls the constructor of the extended
+    // Component class.
+    // sets `this.props` in the constructor
+    super(props)
+
+    this.state = {
+      list,
+      searchTerm: ''
+    }
+
+    this.onSearchChange = this.onSearchChange.bind(this)
+    this.onDismiss = this.onDismiss.bind(this)
+  }
+
+  onSearchChange(e) {
+    this.setState({ searchTerm: e.target.value })
+  }
+
+  onDismiss(id) {
+    const updatedList = this.state.list.filter(item => item.objectID !== id)
+
+    this.setState({ list: updatedList })
+  }
+
   render() {
     return (
       <div className="App">
-        {list.map(item => {
-          return (
-            <div key={item.objectID}>
-              <a href={item.url}>{item.title}</a>
-              <span>{item.author}</span>
-              <span>{item.num_comments}</span>
-              <span>{item.points}</span>
-              <span>{item.ObjectID}</span>
-            </div>
-          )
-        })}
+        <form>
+          <input
+            type="text"
+            onChange={this.onSearchChange}
+          />
+        </form>
+        {this.state.list.filter(isSearched(this.state.searchTerm)).map(item =>
+          <div key={item.objectID}>
+            <a href={item.url}>{item.title}</a>
+            <span>{item.author}</span>
+            <span>{item.num_comments}</span>
+            <span>{item.points}</span>
+            <span>{item.objectID}</span>
+            <span>
+              <button onClick={() => this.onDismiss(item.objectID)}>
+                Dismiss
+              </button>
+            </span>
+          </div>
+        )}
       </div>
     )
   }
