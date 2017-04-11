@@ -13,7 +13,7 @@ const smCol = { width: '10%' }
 // the title of the item
 const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
 
-const Table = ({ list, pattern, onDismiss }) =>
+const Table = ({ list, pattern, onDismiss }) => (
 	<div className="table">
 		{list.filter(isSearched(pattern)).map(item =>
 			<div
@@ -46,5 +46,6 @@ const Table = ({ list, pattern, onDismiss }) =>
 			</div>
 		)}
 	</div>
+)
 
 export default Table
