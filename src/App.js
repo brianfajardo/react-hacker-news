@@ -1,28 +1,16 @@
 import React, { Component } from 'react'
 
+import SearchBar from './components/SearchBar'
+import Table from './components/Table'
 import '../styles/App.css'
 
-const list = [
-  {
-    title: 'React',
-    url: 'https://facebook.github.io/react/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://github.com/reactjs/redux',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-]
+const DEFAULT_QUERY = 'redux'
 
-// ES6 - .includes() returns boolean
-const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
+const PATH_BASE = 'https://hn.algolia.com/api/v1'
+const PATH_SEARCH = '/search'
+const PARAM_SEARCH = 'query='
+
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`
 
 class App extends Component {
   // The constructor is called only once when the component initializes
@@ -33,12 +21,29 @@ class App extends Component {
     super(props)
 
     this.state = {
-      list,
-      searchTerm: ''
+      result: null,
+      searchTerm: DEFAULT_QUERY
     }
 
+    this.setSearchTopStories = this.setSearchTopStories.bind(this)
+    this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this)
     this.onSearchChange = this.onSearchChange.bind(this)
     this.onDismiss = this.onDismiss.bind(this)
+  }
+
+  setSearchTopStories(result) {
+    this.setState({ result })
+  }
+
+  fetchSearchTopStories(searchTerm) {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+      .then(response => response.json())
+      .then(result => this.setSearchTopStories(result))
+  }
+
+  componentDidMount() {
+    const { searchTerm } = this.state
+    this.fetchSearchTopStories(searchTerm)
   }
 
   onSearchChange(e) {
@@ -46,13 +51,16 @@ class App extends Component {
   }
 
   onDismiss(id) {
+    // filter out target objectID from state
     const updatedList = this.state.list.filter(item => item.objectID !== id)
 
     this.setState({ list: updatedList })
   }
 
   render() {
-    const { searchTerm, list } = this.state
+    const { searchTerm, result } = this.state
+
+    if (!result) { return null }
 
     return (
       <div className="page">
@@ -65,7 +73,7 @@ class App extends Component {
         </SearchBar>
         </div>
         <Table
-          list={list}
+          list={result.hits}
           pattern={searchTerm}
           onDismiss={this.onDismiss}
         />
@@ -73,64 +81,5 @@ class App extends Component {
     )
   }
 }
-
-const SearchBar = ({ value, onChange, children }) =>
-  <form>
-    <input
-      type="text"
-      value={value}
-      onChange={onChange}
-    />
-    {children}
-  </form>
-
-// col sizes
-const lgCol = {width: '40%'}
-const mdCol = {width: '30%'}
-const smCol = {width: '10%'}
-
-const Table = ({ list, pattern, onDismiss }) =>
-
-  <div className="table">
-    {list.filter(isSearched(pattern)).map(item =>
-      <div
-        key={item.objectID}
-        className="table-row"
-      >
-        <span style={lgCol}>
-          <a href={item.url}>{item.title}</a>
-        </span>
-        <span style={mdCol}>
-          {item.author}
-        </span>
-        <span style={smCol}>
-          {item.num_comments}
-        </span>
-        <span style={smCol}>
-          {item.points}
-        </span>
-        <span style={smCol}>
-          {item.objectID}
-        </span>
-        <span>
-          <Button
-            onClick={() => onDismiss(item.objectID)}
-            className="button-inline"
-          >
-            Dismiss
-              </Button>
-        </span>
-      </div>
-    )}
-  </div>
-
-const Button = ({ onClick, className = '', children }) =>
-  <button
-    onClick={onClick}
-    className={className}
-    type="button"
-  >
-    {children}
-  </button>
 
 export default App
