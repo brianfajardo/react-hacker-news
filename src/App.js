@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import './App.css'
+
 const list = [
   {
     title: 'React',
@@ -53,13 +55,15 @@ class App extends Component {
     const { searchTerm, list } = this.state
 
     return (
-      <div className="App">
-        <SearchBar
-          value={searchTerm}
-          onChange={this.onSearchChange}
-        >
-          Search
+      <div className="page">
+        <div className="interactions">
+          <SearchBar
+            value={searchTerm}
+            onChange={this.onSearchChange}
+          >
+            Search
         </SearchBar>
+        </div>
         <Table
           list={list}
           pattern={searchTerm}
@@ -80,17 +84,39 @@ const SearchBar = ({ value, onChange, children }) =>
     {children}
   </form>
 
+// col sizes
+const lgCol = {width: '40%'}
+const mdCol = {width: '30%'}
+const smCol = {width: '10%'}
+
 const Table = ({ list, pattern, onDismiss }) =>
-  <div>
+
+  <div className="table">
     {list.filter(isSearched(pattern)).map(item =>
-      <div key={item.objectID}>
-        <a href={item.url}>{item.title}</a>
-        <span>{item.author}</span>
-        <span>{item.num_comments}</span>
-        <span>{item.points}</span>
-        <span>{item.objectID}</span>
+      <div
+        key={item.objectID}
+        className="table-row"
+      >
+        <span style={lgCol}>
+          <a href={item.url}>{item.title}</a>
+        </span>
+        <span style={mdCol}>
+          {item.author}
+        </span>
+        <span style={smCol}>
+          {item.num_comments}
+        </span>
+        <span style={smCol}>
+          {item.points}
+        </span>
+        <span style={smCol}>
+          {item.objectID}
+        </span>
         <span>
-          <Button onClick={() => onDismiss(item.objectID)}>
+          <Button
+            onClick={() => onDismiss(item.objectID)}
+            className="button-inline"
+          >
             Dismiss
               </Button>
         </span>
