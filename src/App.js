@@ -30,12 +30,16 @@ class App extends Component {
       searchKey: '',
       searchTerm: DEFAULT_QUERY
     }
-
+    this.checkIfResultsAlreadyExist = this.checkIfResultsAlreadyExist.bind(this)
     this.setSearchTopStories = this.setSearchTopStories.bind(this)
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this)
     this.onSearchChange = this.onSearchChange.bind(this)
     this.onDismiss = this.onDismiss.bind(this)
     this.onSearchSubmit = this.onSearchSubmit.bind(this)
+  }
+
+  checkIfResultsAlreadyExist(searchTerm) {
+    return !this.state.results[searchTerm]
   }
 
   setSearchTopStories(result) {
@@ -77,7 +81,11 @@ class App extends Component {
     const { searchTerm } = this.state
     e.preventDefault()
     this.setState({ searchKey: searchTerm })
-    this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE)
+
+    // Add check to prevent requests for already cached results
+    if (this.checkIfResultsAlreadyExist(searchTerm)) {
+      this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE)
+    }
   }
 
   onDismiss(id) {
