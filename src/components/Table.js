@@ -15,7 +15,10 @@ const Table = ({ list, onDismiss }) =>
 				className="table-row"
 			>
 				<span style={lgCol}>
-					<a href={item.url}>
+					<a
+						href={item.url}
+						target="_blank"
+					>
 						{item.title}
 					</a>
 				</span>
