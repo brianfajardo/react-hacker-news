@@ -6,7 +6,7 @@ import Button from './components/Button'
 import '../styles/App.css'
 
 // Default variables
-const DEFAULT_QUERY = 'redux'
+const DEFAULT_QUERY = 'react'
 const DEFAULT_PAGE = 0
 const DEFAULT_HPP = 15
 
@@ -16,7 +16,7 @@ const PATH_SEARCH = '/search'
 const PARAM_SEARCH = 'query='
 const PARAM_PAGE = 'page='
 const PARAM_HPP = 'hitsPerPage='
-// const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}`
+// const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${DEFAULT_PAGE}&${PARAM_HPP}${DEFAULT_HPP}`
 
 class App extends Component {
   // The constructor is called only once when the component initializes
@@ -26,7 +26,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      result: null,
+      results: null,
+      searchKey: '',
       searchTerm: DEFAULT_QUERY
     }
 
@@ -43,11 +44,16 @@ class App extends Component {
     // We want to concatenate the old and new page data when
     // fetchSearchTopStories is invoked.
     const { hits, page } = result
-    const previousHits = page !== 0 ? this.state.result.hits : []
+    const { searchKey, results } = this.state
+
+    const previousHits = results && results[searchKey] ? results[searchKey].hits : []
     const updatedHits = [...previousHits, ...hits]
 
     this.setState({
-      result: { hits: updatedHits, page }
+      results: {
+        ...results,
+        [searchKey]: { hits: updatedHits, page }
+      }
     })
   }
 
@@ -59,6 +65,7 @@ class App extends Component {
 
   componentDidMount() {
     const { searchTerm } = this.state
+    this.setState({ searchKey: searchTerm })
     this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE)
   }
 
@@ -69,6 +76,7 @@ class App extends Component {
   onSearchSubmit(e) {
     const { searchTerm } = this.state
     e.preventDefault()
+    this.setState({ searchKey: searchTerm })
     this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE)
   }
 
@@ -84,9 +92,11 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm, result } = this.state
-    // Default to page 0 when there is no result
-    const page = (result && result.page) || 0
+    const { searchTerm, results, searchKey } = this.state
+    // Default to page 0 on initial mount (results === null)
+    // On new API fetch, page = last && statement
+    const page = (results && results[searchKey] && results[searchKey].page) || 0
+    const list = (results && results[searchKey] && results[searchKey].hits) || []
 
     return (
       <div className="page">
@@ -97,15 +107,12 @@ class App extends Component {
             onSubmit={this.onSearchSubmit}
           />
         </div>
-        {/*Conditional rendering based on the truthiness of result*/}
-        {result &&
-          <Table
-            list={result.hits}
-            onDismiss={this.onDismiss}
-          />
-        }
+        <Table
+          list={list}
+          onDismiss={this.onDismiss}
+        />
         <div className="interactions">
-          <Button onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}>
+          <Button onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
             Show Me More
           </Button>
         </div>
