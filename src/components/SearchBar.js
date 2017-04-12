@@ -1,6 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-const SearchBar = ({ value, onChange, onSubmit, children }) =>
+const SearchBar = ({ value, onChange, onSubmit }) =>
   <form onSubmit={onSubmit}>
     <input
       type="text"
@@ -11,5 +12,11 @@ const SearchBar = ({ value, onChange, onSubmit, children }) =>
       Search
     </button>
   </form >
+
+SearchBar.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
+}
 
 export default SearchBar
