@@ -103,7 +103,11 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm, results, searchKey } = this.state
+    const {
+      searchTerm,
+      results,
+      searchKey
+    } = this.state
     // Default to page 0 on initial mount (results === null)
     // On new API fetch, page = last && statement
     const page = (results && results[searchKey] && results[searchKey].page) || 0

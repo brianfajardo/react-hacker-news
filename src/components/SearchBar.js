@@ -1,17 +1,33 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-const SearchBar = ({ value, onChange, onSubmit }) =>
-  <form onSubmit={onSubmit}>
-    <input
-      type="text"
-      value={value}
-      onChange={onChange}
-    />
-    <button type="submit">
-      Search
-    </button>
-  </form >
+class SearchBar extends Component {
+  componentDidMount() {
+    this.input.focus()
+  }
+
+  render() {
+    const {
+      value,
+      onChange,
+      onSubmit
+    } = this.props
+
+    return (
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          value={value}
+          onChange={onChange}
+          ref={node => { this.input = node }}
+        />
+        <button type="submit">
+          Search
+        </button>
+      </form >
+    )
+  }
+}
 
 SearchBar.propTypes = {
   value: PropTypes.string.isRequired,
