@@ -8,20 +8,21 @@ import '../styles/App.css'
 // Default variables
 const DEFAULT_QUERY = 'redux'
 const DEFAULT_PAGE = 0
+const DEFAULT_HPP = 15
 
 // Hacker News API URL decomposed
 const PATH_BASE = 'https://hn.algolia.com/api/v1'
 const PATH_SEARCH = '/search'
 const PARAM_SEARCH = 'query='
 const PARAM_PAGE = 'page='
+const PARAM_HPP = 'hitsPerPage='
 // const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}`
 
 class App extends Component {
   // The constructor is called only once when the component initializes
+  // super(props) calls the constructor of the extended Component class.
+  // sets `this.props` in the constructor
   constructor(props) {
-    // super(props) calls the constructor of the extended
-    // Component class.
-    // sets `this.props` in the constructor
     super(props)
 
     this.state = {
@@ -37,11 +38,21 @@ class App extends Component {
   }
 
   setSearchTopStories(result) {
-    this.setState({ result })
+    // When fetching the next page of data, new data will overwrite
+    // previous page of data.
+    // We want to concatenate the old and new page data when
+    // fetchSearchTopStories is invoked.
+    const { hits, page } = result
+    const previousHits = page !== 0 ? this.state.result.hits : []
+    const updatedHits = [...previousHits, ...hits]
+
+    this.setState({
+      result: { hits: updatedHits, page }
+    })
   }
 
   fetchSearchTopStories(searchTerm, page) {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopStories(result))
   }
@@ -95,7 +106,7 @@ class App extends Component {
         }
         <div className="interactions">
           <Button onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}>
-            More
+            Show Me More
           </Button>
         </div>
       </div>
