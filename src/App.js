@@ -5,18 +5,17 @@ import Table from './components/Table'
 import Button from './components/Button'
 import '../styles/App.css'
 
-// Default variables
-const DEFAULT_QUERY = 'react'
-const DEFAULT_PAGE = 0
-const DEFAULT_HPP = 15
+import {
+  DEFAULT_QUERY,
+  DEFAULT_PAGE,
+  DEFAULT_HPP,
 
-// Hacker News API URL decomposed
-const PATH_BASE = 'https://hn.algolia.com/api/v1'
-const PATH_SEARCH = '/search'
-const PARAM_SEARCH = 'query='
-const PARAM_PAGE = 'page='
-const PARAM_HPP = 'hitsPerPage='
-// const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${DEFAULT_PAGE}&${PARAM_HPP}${DEFAULT_HPP}`
+  PATH_BASE,
+  PATH_SEARCH,
+  PARAM_SEARCH,
+  PARAM_PAGE,
+  PARAM_HPP
+} from './constants'
 
 class App extends Component {
   // The constructor is called only once when the component initializes
