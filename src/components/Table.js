@@ -7,21 +7,17 @@ const lgCol = { width: '40%' }
 const mdCol = { width: '30%' }
 const smCol = { width: '10%' }
 
-// Higher order function
-// Filter only when searchTerm is set
-// When a searchTerm is set, match the incoming searchTerm pattern with
-// the title of the item
-const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
-
-const Table = ({ list, pattern, onDismiss }) =>
+const Table = ({ list, onDismiss }) =>
 	<div className="table">
-		{list.filter(isSearched(pattern)).map(item =>
+		{list.map(item =>
 			<div
 				key={item.objectID}
 				className="table-row"
 			>
 				<span style={lgCol}>
-					<a href={item.url}>{item.title}</a>
+					<a href={item.url}>
+						{item.title}
+					</a>
 				</span>
 				<span style={mdCol}>
 					{item.author}

@@ -29,6 +29,7 @@ class App extends Component {
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this)
     this.onSearchChange = this.onSearchChange.bind(this)
     this.onDismiss = this.onDismiss.bind(this)
+    this.onSearchSubmit = this.onSearchSubmit.bind(this)
   }
 
   setSearchTopStories(result) {
@@ -50,6 +51,12 @@ class App extends Component {
     this.setState({ searchTerm: e.target.value })
   }
 
+  onSearchSubmit(e) {
+    const { searchTerm } = this.state
+    e.preventDefault()
+    this.fetchSearchTopStories(searchTerm)
+  }
+
   onDismiss(id) {
     // Filter out target objectID from hits
     const { hits } = this.state.result
@@ -57,14 +64,12 @@ class App extends Component {
 
     // Immutable state with spread operator
     this.setState({
-      result: {...this.state.result, hits: updatedHits}
+      result: { ...this.state.result, hits: updatedHits }
     })
   }
 
   render() {
     const { searchTerm, result } = this.state
-
-    if (!result) { return null }
 
     return (
       <div className="page">
@@ -72,15 +77,16 @@ class App extends Component {
           <SearchBar
             value={searchTerm}
             onChange={this.onSearchChange}
-          >
-            Search
-        </SearchBar>
+            onSubmit={this.onSearchSubmit}
+          />
         </div>
-        <Table
-          list={result.hits}
-          pattern={searchTerm}
-          onDismiss={this.onDismiss}
-        />
+        {/*Conditional rendering based on the truthiness of result*/}
+        {result &&
+          <Table
+            list={result.hits}
+            onDismiss={this.onDismiss}
+          />
+        }
       </div>
     )
   }

@@ -1,13 +1,17 @@
 import React from 'react'
 
-const SearchBar = ({ value, onChange, children }) =>
-  <form>
+import Button from './Button'
+
+const SearchBar = ({ value, onChange, onSubmit, children }) =>
+  <form onSubmit={onSubmit}>
     <input
       type="text"
       value={value}
       onChange={onChange}
     />
-    {children}
-	</form>
+    <button type="submit">
+      Search
+    </button>
+  </form >
 
 export default SearchBar
