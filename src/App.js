@@ -81,13 +81,17 @@ class App extends Component {
   }
 
   onDismiss(id) {
-    // Filter out target objectID from hits
-    const { hits } = this.state.result
+    const { searchKey, results } = this.state
+    const { hits, page } = results[searchKey]
+
     const updatedHits = hits.filter(item => item.objectID !== id)
 
     // Immutable state with spread operator
     this.setState({
-      result: { ...this.state.result, hits: updatedHits }
+      results: {
+        ...results,
+        [searchKey]: { hits: updatedHits, page }
+      }
     })
   }
 

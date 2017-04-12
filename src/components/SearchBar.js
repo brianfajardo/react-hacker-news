@@ -1,7 +1,5 @@
 import React from 'react'
 
-import Button from './Button'
-
 const SearchBar = ({ value, onChange, onSubmit, children }) =>
   <form onSubmit={onSubmit}>
     <input
