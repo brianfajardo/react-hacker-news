@@ -23,6 +23,25 @@ const withLoading = Component => ({ isLoading, ...rest }) => isLoading ? <div>Lo
 // Using above HOF to enhance Button component to a higher order component
 const ButtonWithLoading = withLoading(Button)
 
+// setState() method is asynchronous
+// Using a callback function in setState() that operates on the state
+// and props at the time of execution.
+// Avoiding 'stale values'
+const updateSearchTopStoriesState = (hits, page) => prevState => {
+  const { searchKey, results } = prevState
+
+  const previousHits = results && results[searchKey] ? results[searchKey].hits : []
+  const updatedHits = [...previousHits, ...hits]
+
+  return {
+    results: {
+      ...results,
+      [searchKey]: { hits: updatedHits, page }
+    },
+    isLoading: false
+  }
+}
+
 class App extends Component {
   // The constructor is called only once when the component initializes
   // super(props) calls the constructor of the extended Component class.
@@ -55,18 +74,8 @@ class App extends Component {
   // fetchSearchTopStories is invoked.
   setSearchTopStories(result) {
     const { hits, page } = result
-    const { searchKey, results } = this.state
 
-    const previousHits = results && results[searchKey] ? results[searchKey].hits : []
-    const updatedHits = [...previousHits, ...hits]
-
-    this.setState({
-      results: {
-        ...results,
-        [searchKey]: { hits: updatedHits, page }
-      },
-      isLoading: false
-    })
+    this.setState(updateSearchTopStoriesState(hits, page))
   }
 
   fetchSearchTopStories(searchTerm, page) {
