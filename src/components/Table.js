@@ -5,21 +5,18 @@ import { sortBy } from 'lodash'
 import Button from './Button'
 import Sort from './Sort'
 
+import { lgCol, mdCol, smCol } from '../constants'
+
 // Sort functions
 // Default sortKey === NONE, no sorting occurs
 // COMMENTS and POINTS are reversed to display highest to lowest
-const SORTS = {
+export const SORTS = {
 	NONE: list => list,
 	TITLE: list => sortBy(list, 'title'),
 	AUTHOR: list => sortBy(list, 'author'),
 	COMMENTS: list => sortBy(list, 'num_comments').reverse(),
 	POINTS: list => sortBy(list, 'points').reverse()
 }
-
-// Column sizes
-const lgCol = { width: '40%' }
-const mdCol = { width: '30%' }
-const smCol = { width: '10%' }
 
 const Table = ({ list, onDismiss, sortKey, onSort }) =>
 	<div className="table">
