@@ -18,81 +18,97 @@ export const SORTS = {
 	POINTS: list => sortBy(list, 'points').reverse()
 }
 
-const Table = ({ list, onDismiss, sortKey, onSort }) =>
-	<div className="table">
-		<div className="table-header">
-			<span style={lgCol}>
-				<Sort
-					sortKey={'TITLE'}
-					onSort={onSort}
-				>
-					Title
-				</Sort>
-			</span>
-			<span style={mdCol}>
-				<Sort
-					sortKey={'AUTHOR'}
-					onSort={onSort}
-				>
-					Author
-				</Sort>
-			</span>
-			<span style={smCol}>
-				<Sort
-					sortKey={'COMMENTS'}
-					onSort={onSort}
-				>
-					Comments
-				</Sort>
-			</span>
-			<span style={smCol}>
-				<Sort
-					sortKey={'POINTS'}
-					onSort={onSort}
-				>
-					Points
-				</Sort>
-			</span>
-			<span style={smCol}>
-				Archive
-			</span>
-		</div>
-		{SORTS[sortKey](list).map(item =>
-			<div
-				key={item.objectID}
-				className="table-row"
-			>
+const Table = ({
+	list,
+	onDismiss,
+	sortKey,
+	onSort,
+	isSortReverse
+}) => {
+	const sortedList = SORTS[sortKey](list)
+	const reverseSortedList = isSortReverse
+		? sortedList.reverse()
+		: sortedList
+
+	return (
+		<div className="table">
+			<div className="table-header">
 				<span style={lgCol}>
-					<a
-						href={item.url}
-						target="_blank"
+					<Sort
+						sortKey={'TITLE'}
+						onSort={onSort}
 					>
-						{item.title}
-					</a>
+						Title
+					</Sort>
 				</span>
 				<span style={mdCol}>
-					{item.author}
-				</span>
-				<span style={smCol}>
-					{item.num_comments}
-				</span>
-				<span style={smCol}>
-					{item.points}
-				</span>
-				<span style={smCol}>
-					{item.objectID}
-				</span>
-				<span>
-					<Button
-						onClick={() => onDismiss(item.objectID)}
-						className="button-inline"
+					<Sort
+						sortKey={'AUTHOR'}
+						onSort={onSort}
 					>
-						Dismiss
-          </Button>
+						Author
+					</Sort>
+				</span>
+				<span style={smCol}>
+					<Sort
+						sortKey={'COMMENTS'}
+						onSort={onSort}
+					>
+						Comments
+					</Sort>
+				</span>
+				<span style={smCol}>
+					<Sort
+						sortKey={'POINTS'}
+						onSort={onSort}
+					>
+						Points
+					</Sort>
+				</span>
+				<span style={smCol}>
+					Archive
 				</span>
 			</div>
-		)}
-	</div>
+			{
+				reverseSortedList.map(item =>
+					<div
+						key={item.objectID}
+						className="table-row"
+					>
+						<span style={lgCol}>
+							<a
+								href={item.url}
+								target="_blank"
+							>
+								{item.title}
+							</a>
+						</span>
+						<span style={mdCol}>
+							{item.author}
+						</span>
+						<span style={smCol}>
+							{item.num_comments}
+						</span>
+						<span style={smCol}>
+							{item.points}
+						</span>
+						<span style={smCol}>
+							{item.objectID}
+						</span>
+						<span>
+							<Button
+								onClick={() => onDismiss(item.objectID)}
+								className="button-inline"
+							>
+								Dismiss
+          		</Button>
+						</span>
+					</div>
+				)
+			}
+		</div >
+	)
+}
 
 Table.propTypes = {
 	list: PropTypes.arrayOf(
@@ -108,5 +124,6 @@ Table.propTypes = {
 	sortKey: PropTypes.string.isRequired,
 	onSort: PropTypes.func.isRequired
 }
+
 
 export default Table

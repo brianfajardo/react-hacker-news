@@ -35,7 +35,8 @@ class App extends Component {
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
       isLoading: false,
-      sortKey: 'NONE'
+      sortKey: 'NONE',
+      isSortReverse: false
     }
     this.checkIfResultsAlreadyExist = this.checkIfResultsAlreadyExist.bind(this)
     this.setSearchTopStories = this.setSearchTopStories.bind(this)
@@ -51,7 +52,11 @@ class App extends Component {
   }
 
   onSort(sortKey) {
-    this.setState({ sortKey })
+    // Determine if list has already been sorted by sortKey already
+    // If it is, reverse isSortReverse state
+    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse
+
+    this.setState({ sortKey, isSortReverse })
   }
 
   setSearchTopStories(result) {
@@ -124,7 +129,8 @@ class App extends Component {
       results,
       searchKey,
       isLoading,
-      sortKey
+      sortKey,
+      isSortReverse
     } = this.state
 
     // Default to page 0 on initial mount (results === null)
@@ -145,6 +151,7 @@ class App extends Component {
           list={list}
           sortKey={sortKey}
           onSort={this.onSort}
+          isSortReverse={isSortReverse}
           onDismiss={this.onDismiss}
         />
         <div className="interactions">
