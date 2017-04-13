@@ -1,16 +1,66 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { sortBy } from 'lodash'
 
 import Button from './Button'
+import Sort from './Sort'
+
+// Sort functions
+// Default sortKey === NONE, no sorting occurs
+// COMMENTS and POINTS are reversed to display highest to lowest
+const SORTS = {
+	NONE: list => list,
+	TITLE: list => sortBy(list, 'title'),
+	AUTHOR: list => sortBy(list, 'author'),
+	COMMENTS: list => sortBy(list, 'num_comments').reverse(),
+	POINTS: list => sortBy(list, 'points').reverse()
+}
 
 // Column sizes
 const lgCol = { width: '40%' }
 const mdCol = { width: '30%' }
 const smCol = { width: '10%' }
 
-const Table = ({ list, onDismiss }) =>
+const Table = ({ list, onDismiss, sortKey, onSort }) =>
 	<div className="table">
-		{list.map(item =>
+		<div className="table-header">
+			<span style={lgCol}>
+				<Sort
+					sortKey={'TITLE'}
+					onSort={onSort}
+				>
+					Title
+				</Sort>
+			</span>
+			<span style={mdCol}>
+				<Sort
+					sortKey={'AUTHOR'}
+					onSort={onSort}
+				>
+					Author
+				</Sort>
+			</span>
+			<span style={smCol}>
+				<Sort
+					sortKey={'COMMENTS'}
+					onSort={onSort}
+				>
+					Comments
+				</Sort>
+			</span>
+			<span style={smCol}>
+				<Sort
+					sortKey={'POINTS'}
+					onSort={onSort}
+				>
+					Points
+				</Sort>
+			</span>
+			<span style={smCol}>
+				Archive
+			</span>
+		</div>
+		{SORTS[sortKey](list).map(item =>
 			<div
 				key={item.objectID}
 				className="table-row"
@@ -57,7 +107,9 @@ Table.propTypes = {
 			points: PropTypes.number
 		})
 	).isRequired,
-	onDismiss: PropTypes.func.isRequired
+	onDismiss: PropTypes.func.isRequired,
+	sortKey: PropTypes.string.isRequired,
+	onSort: PropTypes.func.isRequired
 }
 
 export default Table

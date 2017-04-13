@@ -20,7 +20,7 @@ import {
 // Higher order function (HOF)
 const withLoading = Component => ({ isLoading, ...rest }) => isLoading ? <div>Loading..</div> : <Component {...rest} />
 
-// Using above HOF to enhance Button to a higher order component
+// Using above HOF to enhance Button component to a higher order component
 const ButtonWithLoading = withLoading(Button)
 
 class App extends Component {
@@ -34,7 +34,8 @@ class App extends Component {
       results: null,
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
-      isLoading: false
+      isLoading: false,
+      sortKey: 'NONE'
     }
     this.checkIfResultsAlreadyExist = this.checkIfResultsAlreadyExist.bind(this)
     this.setSearchTopStories = this.setSearchTopStories.bind(this)
@@ -42,10 +43,15 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this)
     this.onDismiss = this.onDismiss.bind(this)
     this.onSearchSubmit = this.onSearchSubmit.bind(this)
+    this.onSort = this.onSort.bind(this)
   }
 
   checkIfResultsAlreadyExist(searchTerm) {
     return !this.state.results[searchTerm]
+  }
+
+  onSort(sortKey) {
+    this.setState({ sortKey })
   }
 
   setSearchTopStories(result) {
@@ -117,7 +123,8 @@ class App extends Component {
       searchTerm,
       results,
       searchKey,
-      isLoading
+      isLoading,
+      sortKey
     } = this.state
 
     // Default to page 0 on initial mount (results === null)
@@ -136,6 +143,8 @@ class App extends Component {
         </div>
         <Table
           list={list}
+          sortKey={sortKey}
+          onSort={this.onSort}
           onDismiss={this.onDismiss}
         />
         <div className="interactions">
