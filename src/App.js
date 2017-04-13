@@ -17,6 +17,12 @@ import {
   PARAM_HPP
 } from './constants'
 
+// Higher order function (HOF)
+const withLoading = Component => ({ isLoading, ...rest }) => isLoading ? <div>Loading..</div> : <Component {...rest} />
+
+// Using above HOF to enhance Button to a higher order component
+const ButtonWithLoading = withLoading(Button)
+
 class App extends Component {
   // The constructor is called only once when the component initializes
   // super(props) calls the constructor of the extended Component class.
@@ -27,7 +33,8 @@ class App extends Component {
     this.state = {
       results: null,
       searchKey: '',
-      searchTerm: DEFAULT_QUERY
+      searchTerm: DEFAULT_QUERY,
+      isLoading: false
     }
     this.checkIfResultsAlreadyExist = this.checkIfResultsAlreadyExist.bind(this)
     this.setSearchTopStories = this.setSearchTopStories.bind(this)
@@ -56,11 +63,14 @@ class App extends Component {
       results: {
         ...results,
         [searchKey]: { hits: updatedHits, page }
-      }
+      },
+      isLoading: false
     })
   }
 
   fetchSearchTopStories(searchTerm, page) {
+    this.setState({ isLoading: true })
+
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopStories(result))
@@ -106,8 +116,10 @@ class App extends Component {
     const {
       searchTerm,
       results,
-      searchKey
+      searchKey,
+      isLoading
     } = this.state
+
     // Default to page 0 on initial mount (results === null)
     // On new API fetch, page = last && statement
     const page = (results && results[searchKey] && results[searchKey].page) || 0
@@ -127,9 +139,12 @@ class App extends Component {
           onDismiss={this.onDismiss}
         />
         <div className="interactions">
-          <Button onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
-            Show Me More
-          </Button>
+          <ButtonWithLoading
+            isLoading={isLoading}
+            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
+          >
+            More
+          </ButtonWithLoading>
         </div>
       </div>
     )
