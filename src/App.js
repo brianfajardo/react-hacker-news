@@ -34,36 +34,26 @@ class App extends Component {
       results: null,
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
-      isLoading: false,
-      sortKey: 'NONE',
-      isSortReverse: false
+      isLoading: false
     }
+
     this.checkIfResultsAlreadyExist = this.checkIfResultsAlreadyExist.bind(this)
     this.setSearchTopStories = this.setSearchTopStories.bind(this)
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this)
     this.onSearchChange = this.onSearchChange.bind(this)
     this.onDismiss = this.onDismiss.bind(this)
     this.onSearchSubmit = this.onSearchSubmit.bind(this)
-    this.onSort = this.onSort.bind(this)
   }
 
   checkIfResultsAlreadyExist(searchTerm) {
     return !this.state.results[searchTerm]
   }
 
-  onSort(sortKey) {
-    // Determine if list has already been sorted by sortKey already
-    // If it is, reverse isSortReverse state
-    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse
-
-    this.setState({ sortKey, isSortReverse })
-  }
-
+  // When fetching the next page of data, new data will overwrite
+  // previous page of data.
+  // We want to concatenate the old and new page data when
+  // fetchSearchTopStories is invoked.
   setSearchTopStories(result) {
-    // When fetching the next page of data, new data will overwrite
-    // previous page of data.
-    // We want to concatenate the old and new page data when
-    // fetchSearchTopStories is invoked.
     const { hits, page } = result
     const { searchKey, results } = this.state
 
@@ -128,9 +118,7 @@ class App extends Component {
       searchTerm,
       results,
       searchKey,
-      isLoading,
-      sortKey,
-      isSortReverse
+      isLoading
     } = this.state
 
     // Default to page 0 on initial mount (results === null)
@@ -149,9 +137,6 @@ class App extends Component {
         </div>
         <Table
           list={list}
-          sortKey={sortKey}
-          onSort={this.onSort}
-          isSortReverse={isSortReverse}
           onDismiss={this.onDismiss}
         />
         <div className="interactions">

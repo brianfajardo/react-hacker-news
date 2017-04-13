@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { sortBy } from 'lodash'
 
@@ -18,100 +18,125 @@ export const SORTS = {
 	POINTS: list => sortBy(list, 'points').reverse()
 }
 
-const Table = ({
-	list,
-	onDismiss,
-	sortKey,
-	onSort,
-	isSortReverse
-}) => {
-	const sortedList = SORTS[sortKey](list)
-	const reverseSortedList = isSortReverse
-		? sortedList.reverse()
-		: sortedList
+class Table extends Component {
+	constructor(props) {
+		super(props)
 
-	return (
-		<div className="table">
-			<div className="table-header">
-				<span style={lgCol}>
-					<Sort
-						sortKey={'TITLE'}
-						onSort={onSort}
-						activeSortKey={sortKey}
-					>
-						Title
-					</Sort>
-				</span>
-				<span style={mdCol}>
-					<Sort
-						sortKey={'AUTHOR'}
-						onSort={onSort}
-						activeSortKey={sortKey}
-					>
-						Author
-					</Sort>
-				</span>
-				<span style={smCol}>
-					<Sort
-						sortKey={'COMMENTS'}
-						onSort={onSort}
-						activeSortKey={sortKey}
-					>
-						Comments
-					</Sort>
-				</span>
-				<span style={smCol}>
-					<Sort
-						sortKey={'POINTS'}
-						onSort={onSort}
-						activeSortKey={sortKey}
-					>
-						Points
-					</Sort>
-				</span>
-				<span style={smCol}>
-					Archive
-				</span>
+		this.state = {
+			sortKey: 'NONE',
+			isSortReverse: false
+		}
+
+		this.onSort = this.onSort.bind(this)
+	}
+
+	// Determine if list has already been sorted by sortKey already
+	// If it is, reverse isSortReverse state
+	onSort(sortKey) {
+		const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse
+
+		this.setState({ sortKey, isSortReverse })
+	}
+
+	render() {
+		const {
+			list,
+			onDismiss
+		} = this.props
+
+		const {
+			sortKey,
+			isSortReverse
+		} = this.state
+
+		const sortedList = SORTS[sortKey](list)
+		const reverseSortedList = isSortReverse
+			? sortedList.reverse()
+			: sortedList
+
+		return (
+			<div className="table">
+				<div className="table-header">
+					<span style={lgCol}>
+						<Sort
+							sortKey={'TITLE'}
+							onSort={this.onSort}
+							activeSortKey={sortKey}
+						>
+							Title
+						</Sort>
+					</span>
+					<span style={mdCol}>
+						<Sort
+							sortKey={'AUTHOR'}
+							onSort={this.onSort}
+							activeSortKey={sortKey}
+						>
+							Author
+						</Sort>
+					</span>
+					<span style={smCol}>
+						<Sort
+							sortKey={'COMMENTS'}
+							onSort={this.onSort}
+							activeSortKey={sortKey}
+						>
+							Comments
+						</Sort>
+					</span>
+					<span style={smCol}>
+						<Sort
+							sortKey={'POINTS'}
+							onSort={this.onSort}
+							activeSortKey={sortKey}
+						>
+							Points
+						</Sort>
+					</span>
+					<span style={smCol}>
+						Archive
+					</span>
+				</div>
+				{
+					reverseSortedList.map(item =>
+						<div
+							key={item.objectID}
+							className="table-row"
+						>
+							<span style={lgCol}>
+								<a
+									href={item.url}
+									target="_blank"
+								>
+									{item.title}
+								</a>
+							</span>
+							<span style={mdCol}>
+								{item.author}
+							</span>
+							<span style={smCol}>
+								{item.num_comments}
+							</span>
+							<span style={smCol}>
+								{item.points}
+							</span>
+							<span style={smCol}>
+								{item.objectID}
+							</span>
+							<span>
+								<Button
+									onClick={() => onDismiss(item.objectID)}
+									className="button-inline"
+								>
+									Dismiss
+          			</Button>
+							</span>
+						</div>
+					)
+				}
 			</div>
-			{
-				reverseSortedList.map(item =>
-					<div
-						key={item.objectID}
-						className="table-row"
-					>
-						<span style={lgCol}>
-							<a
-								href={item.url}
-								target="_blank"
-							>
-								{item.title}
-							</a>
-						</span>
-						<span style={mdCol}>
-							{item.author}
-						</span>
-						<span style={smCol}>
-							{item.num_comments}
-						</span>
-						<span style={smCol}>
-							{item.points}
-						</span>
-						<span style={smCol}>
-							{item.objectID}
-						</span>
-						<span>
-							<Button
-								onClick={() => onDismiss(item.objectID)}
-								className="button-inline"
-							>
-								Dismiss
-          		</Button>
-						</span>
-					</div>
-				)
-			}
-		</div >
-	)
+		)
+	}
 }
 
 Table.propTypes = {
@@ -124,10 +149,7 @@ Table.propTypes = {
 			points: PropTypes.number
 		})
 	).isRequired,
-	onDismiss: PropTypes.func.isRequired,
-	sortKey: PropTypes.string.isRequired,
-	onSort: PropTypes.func.isRequired,
-	isSortReverse: PropTypes.bool.isRequired
+	onDismiss: PropTypes.func.isRequired
 }
 
 
