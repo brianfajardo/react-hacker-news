@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
 
 import Button from './Button'
 
@@ -24,6 +25,13 @@ const Sort = ({
 			{children}
 		</Button>
 	)
+}
+
+Sort.propTypes = {
+	sortKey: PropTypes.string.isRequired,
+	onSort: PropTypes.func.isRequired,
+	children: PropTypes.node,
+	activeSortKey: PropTypes.string.isRequired
 }
 
 export default Sort

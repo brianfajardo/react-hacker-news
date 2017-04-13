@@ -7,7 +7,7 @@ import Sort from './Sort'
 
 import { lgCol, mdCol, smCol } from '../constants'
 
-// Sort functions
+// Helper sort functions
 // Default sortKey === NONE, no sorting occurs
 // COMMENTS and POINTS are reversed to display highest to lowest
 export const SORTS = {
@@ -126,7 +126,8 @@ Table.propTypes = {
 	).isRequired,
 	onDismiss: PropTypes.func.isRequired,
 	sortKey: PropTypes.string.isRequired,
-	onSort: PropTypes.func.isRequired
+	onSort: PropTypes.func.isRequired,
+	isSortReverse: PropTypes.bool.isRequired
 }
 
 
